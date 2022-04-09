@@ -10,6 +10,7 @@ const nodeType = process.argv[2];
 const blockchainType = process.argv[3];
 const nodeIp = process.argv[4];
 const masterAddress = process.argv[5];
+const RACAddress = process.argv[6];
 const nodeUuid = uuid().split('-').join('');
 const PORT = 3002;
 const runningSince = (new Date()).toISOString().replace("T", " ").replace(/\.\d+.*/, "");
@@ -56,6 +57,7 @@ if ((nodeType !== "master" && nodeType !== "network") ||
 
 const isMasterNode = (nodeType === 'master');
 log(`Starting ${nodeType} node at ${runningSince}`);
+log(`RAC is located at ${RACAddress}, this will be used by slave safeclient.py`);
 
 function getURI(ip, route) {
     return `http://${ip}:${PORT}${route}`;
@@ -249,7 +251,7 @@ app.post('/validate', function (req, res) {
 			var block = blockchain.chain[newBlockIndex-1];
 			payload = JSON.stringify(block.carData)
 			log(`Forwarding CRDT payload: ${payload}`);
-
+			
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
                         "nodeAddress": nodeIp
