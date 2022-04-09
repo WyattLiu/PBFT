@@ -249,6 +249,7 @@ app.post('/validate', function (req, res) {
 			var block = blockchain.chain[newBlockIndex-1];
 			payload = JSON.stringify(block.carData)
 			log(`Forwarding CRDT payload: ${payload}`);
+
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
                         "nodeAddress": nodeIp
