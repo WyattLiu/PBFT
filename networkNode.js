@@ -87,6 +87,15 @@ app.get('/blockchain', function (req, res) {
     isEndpointEnabled(req, res, () => res.send(blockchain));
 });
 
+// partial chain please
+app.get('/blockchain/partial/:height', function (req, res) {
+	const size = blockchain.chain.length;
+	var repeatedHeight = req.params.height;
+	isEndpointEnabled(req, res, () => res.send(blockchain.chain.slice(repeatedHeight,size)));
+});
+
+
+
 app.get('/blockchain/size', (req, res) => {
     isEndpointEnabled(req, res, () => { 
         res.json({
