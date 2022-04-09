@@ -164,7 +164,7 @@ app.post('/receive-vote', function (req, res) {
         const vote = req.body.vote;
         log(`Vote ${vote} by ${req.body.nodeAddress} was received on block ${blockHash}`);
         votingStatistics.voteReceived(vote, req.body.nodeAddress);
-
+	// at this port
         const results = blockchain.processVote(blockHash, blockIndex, req.body.nodeAddress, vote);
 
         if ('warning' in results) {
@@ -244,7 +244,11 @@ app.post('/validate', function (req, res) {
                     log(`Vote transmission results:\n${JSON.stringify(body)}`);
                     votingStatistics.validationResultsReceived();
                     log(`Total validation time: ${votingStatistics.validationTotalTime}ms`);
-
+			// everyone votes yes
+			// need to forward
+			var block = blockchain.chain[newBlockIndex-1];
+			payload = JSON.stringify(block.carData)
+			log(`Forwarding CRDT payload: ${payload}`);
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
                         "nodeAddress": nodeIp
@@ -313,7 +317,7 @@ app.post('/createBlock', function (req, res) {
 
             log(`Timestamp used: ${timestamp}`);
             const createdBlock = blockchain.createBlock(blockchain.getLastBlock()['hash'], req.body.carPlate, req.body.block, timestamp);
-
+		log(`Payload to forward ${req.body.block}`)
             votingStatistics.blockCreationLocalFinished();
             log(`Block creation time: ${votingStatistics.blockCreationLocalTime}ms`);
 
