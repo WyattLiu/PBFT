@@ -261,6 +261,15 @@ app.post('/validate', function (req, res) {
 			});
 			client.on('data', function(chunk) {
 				console.log(`Data received from the server: ${chunk.toString()}.`);
+				const Net = require('net');
+				const port = 60002;
+	                        const host = 'localhost';
+	                        const client_backward = new Net.Socket();
+				client_backward.connect({ port: port, host: host }, function() {
+				        console.log('TCP connection established with client');
+					client_backward.write(chunk.toString());
+					client_backward.end();
+		                });
 				client.end();
 			});
                     res.json({

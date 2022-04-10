@@ -1,5 +1,6 @@
 from .helper import msg_construct
 from .helper import req_construct
+from type.Action import Action
 
 class ORSet:
 
