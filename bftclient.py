@@ -97,7 +97,7 @@ if __name__ == "__main__":
             exit(1)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         hostname = socket.gethostname()
-        sock.bind(('localhost', 60002))
+        sock.bind((hostname, 0))
         sock.listen()    
         while (True):
             text = input("Enter:").split(" ")
@@ -132,10 +132,12 @@ if __name__ == "__main__":
                 continue
 
             print("Forwarding to BFT: " + str(text) + " located at: " + bft_addr)
-            string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + ' '.join(text) + '"}}'
-            print("Raw json forwarded " + string_to_send)
             port = sock.getsockname()[1]
-            #print("Self hostname: " + str(hostname) + " port: " + str(port))
+            print("Tell pbft my hostname: " + str(hostname) + " port: " + str(port))
+            text = str(hostname) + " " + str(port) + " " + ' '.join(text)
+            
+            string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + text + '"}}'
+            print("Raw json forwarded " + string_to_send)
             r = requests.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send)
             conn, addr = sock.accept()
             binary_data = conn.recv(1024)

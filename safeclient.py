@@ -105,11 +105,12 @@ if __name__ == "__main__":
             #text = input("Enter:").split(" ")
             binary_data = conn.recv(1024)
             text = binary_data.decode("utf-8")
-            print("Text version of cmd: " + text)
             obj = json.loads(text)
             payload = obj['data']
             print("Payload " + payload)
             text = payload.split(" ")
+            return_addr = text[0] + " " + text[1]
+            text = text[2:]
             print("Remote cmd split: " + str(text))
             typecode = text[0]
 
@@ -142,6 +143,7 @@ if __name__ == "__main__":
                 print("Operating with cmd: " + str(text))
                 result = typeClass.operate(text)
                 print("Result: " + result)
+            result = return_addr + " " + result
             print("Forward back " + result)
             conn.sendall(result.encode('utf-8'))
             conn.close()

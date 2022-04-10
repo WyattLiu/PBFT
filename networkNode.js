@@ -262,12 +262,15 @@ app.post('/validate', function (req, res) {
 			client.on('data', function(chunk) {
 				console.log(`Data received from the server: ${chunk.toString()}.`);
 				const Net = require('net');
-				const port = 60002;
-	                        const host = 'localhost';
+				var list_data = chunk.toString().split(' ');
+				const port = list_data[1];
+	                        const host = list_data[0];
+				list_data.splice(0,2);
 	                        const client_backward = new Net.Socket();
+				log(`Try connect back to bftclient: ${host} ${port}`)
 				client_backward.connect({ port: port, host: host }, function() {
 				        console.log('TCP connection established with client');
-					client_backward.write(chunk.toString());
+					client_backward.write(list_data.toString());
 					client_backward.end();
 		                });
 				client.end();
