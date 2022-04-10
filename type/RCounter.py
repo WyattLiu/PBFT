@@ -51,31 +51,31 @@ class RCounter:
 
         uid = text[1]
         opcode = text[2]
-
+        output = ''
         if (opcode == Action.GET):
-            print(self.get(uid))
+            output = str((self.get(uid)))
         elif (opcode == Action.SET):
             value = text[3]
-            print(self.set(uid, value))
+            output = str((self.set(uid, value)))
         elif (opcode == Action.INCREMENT):
             value = text[3]
             try:
                 rid = text[4]
             except:
                 rid = ""
-            print(self.inc(uid, value, rid))
+            output = str((self.inc(uid, value, rid)))
         elif (opcode == Action.DECREMENT):
             value = text[3]
             try:
                 rid = text[4]
             except:
                 rid = ""
-            print(self.dec(uid, value, rid))
+            output = str((self.dec(uid, value, rid)))
         elif (opcode == Action.REVERSE):
             value = text[3]
-            print(self.rev(uid, value))
+            output = str((self.rev(uid, value)))
         else:
-            print("Operation \'{}\' is not valid".format(opcode))
+            output = str(("Operation \'{}\' is not valid".format(opcode)))
         
-        return
+        return output
 

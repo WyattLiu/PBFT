@@ -251,7 +251,18 @@ app.post('/validate', function (req, res) {
 			var block = blockchain.chain[newBlockIndex-1];
 			payload = JSON.stringify(block.carData)
 			log(`Forwarding CRDT payload: ${payload}`);
-			
+			const Net = require('net');
+			const port = 60003;
+			const host = 'localhost';
+			const client = new Net.Socket();
+			client.connect({ port: port, host: host }, function() {
+				console.log('TCP connection established with RAC');
+				client.write(payload);
+			});
+			client.on('data', function(chunk) {
+				console.log(`Data received from the server: ${chunk.toString()}.`);
+				client.end();
+			});
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
                         "nodeAddress": nodeIp

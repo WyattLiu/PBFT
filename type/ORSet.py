@@ -39,18 +39,18 @@ class ORSet:
 
         uid = text[1]
         opcode = text[2]
-
+        output = ''
         if (opcode == Action.GET):
-            print(self.get(uid))
+            output = str((self.get(uid)))
         elif (opcode == Action.SET):
-            print(self.set(uid))
+            output = str((self.set(uid)))
         elif (opcode == Action.ADD):
             value = text[3]
-            print(self.add(uid, value))
+            output = str((self.add(uid, value)))
         elif (opcode == Action.REMOVE):
             value = text[3]
-            print(self.remvoe(uid, value))
+            output = str((self.remvoe(uid, value)))
         else:
-            print("Operation \'{}\' is not valid".format(opcode))
+            output = str(("Operation \'{}\' is not valid".format(opcode)))
         
-        return
+        return output

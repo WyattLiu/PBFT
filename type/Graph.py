@@ -53,26 +53,26 @@ class Graph:
 
         uid = text[1]
         opcode = text[2]
-
+        output = ''
         if (opcode == Action.GET):
-            print(self.get(uid))
+            output = str((self.get(uid)))
         elif (opcode == Action.SET):
-            print(self.set(uid))
+            output = str((self.set(uid)))
         elif (opcode == Action.ADDVERTEX):
             value = text[3]
-            print(self.addvertex(uid, value))
+            output = str((self.addvertex(uid, value)))
         elif (opcode == Action.REMOVEVERTEX):
             value = text[3]
-            print(self.remvoevertex(uid, value))
+            output = str((self.remvoevertex(uid, value)))
         elif (opcode == Action.ADDEDGE):
             value1 = text[3]
             value2 = text[4]
-            print(self.addedge(uid, value1, value2))
+            output = str((self.addedge(uid, value1, value2)))
         elif (opcode == Action.REMOVEEDGE):
             value1 = text[3]
             value2 = text[4]
-            print(self.removeedge(uid, value1, value2))
+            output = str((self.removeedge(uid, value1, value2)))
         else:
-            print("Operation \'{}\' is not valid".format(opcode))
+            output = str(("Operation \'{}\' is not valid".format(opcode)))
         
-        return
+        return output

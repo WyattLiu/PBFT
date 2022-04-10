@@ -4,6 +4,7 @@ import socket
 import random
 import time
 import sys
+import json
 from type.GCounter import PNCounter
 from type.RCounter import RCounter
 from type.ORSet import ORSet
@@ -89,14 +90,27 @@ if __name__ == "__main__":
         port = int(address.split(":")[1])
 
         s = Server(host, port)   
-
         if s.connect() == 0:
             print("connection failed")
             exit(1)
-
+        # we are ready to forward
+        # hardcode port
+        port = 60003
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind(('localhost', port))
+        sock.listen()
+        print("Bind " + str(port))
         while (True):
-            text = input("Enter:").split(" ")
-
+            conn, addr = sock.accept()
+            #text = input("Enter:").split(" ")
+            binary_data = conn.recv(1024)
+            text = binary_data.decode("utf-8")
+            print("Text version of cmd: " + text)
+            obj = json.loads(text)
+            payload = obj['data']
+            print("Payload " + payload)
+            text = payload.split(" ")
+            print("Remote cmd split: " + str(text))
             typecode = text[0]
 
             if (typecode == Type.DISCONNECT):
@@ -123,11 +137,14 @@ if __name__ == "__main__":
                 typeClass = Performance(s)
 
             else:
-                print("Type \'{}\' is not valid".format(typecode))
-                continue
-
-            typeClass.operate(text)
-    
+                result = str("Type \'{}\' is not valid".format(typecode))
+            if typeClass != None:
+                print("Operating with cmd: " + str(text))
+                result = typeClass.operate(text)
+                print("Result: " + result)
+            print("Forward back " + result)
+            conn.sendall(result.encode('utf-8'))
+            conn.close()
         s.disconnect()
 
 
