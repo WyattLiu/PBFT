@@ -214,9 +214,11 @@ app.post('/validate', function (req, res) {
     isEndpointEnabled(req, res, () => {
         try {
             votingStatistics.validationStarted();
+		log(`Not mine`)
         } catch(err) {
             votingStatistics = new VotingStatistics();
-        }
+        	log(`Mine`)
+	}
 
         if (!isValidMeta(req.body.originalBody)) {
             res.json({
