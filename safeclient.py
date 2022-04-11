@@ -88,7 +88,7 @@ if __name__ == "__main__":
         address = sys.argv[1]
         host = address.split(":")[0]
         port = int(address.split(":")[1])
-
+        print("Pased addr: " + host + " port: " + str(port))
         s = Server(host, port)   
         if s.connect() == 0:
             print("connection failed")

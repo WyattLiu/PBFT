@@ -81,20 +81,20 @@ if __name__ == "__main__":
         helpMessage()
 
     else:
-        if len(sys.argv) < 3:
+        if len(sys.argv) < 2:
             raise ValueError('wrong arg')
     
         # gc <key> <action> [value]
-        address = sys.argv[1]
-        host = address.split(":")[0]
-        port = int(address.split(":")[1])
-        bft_addr = sys.argv[2]
+        #address = sys.argv[1]
+        #host = address.split(":")[0]
+        #port = int(address.split(":")[1])
+        bft_addr = sys.argv[1]
 
-        s = Server(host, port)   
+        s = Server("localhost", 0)   
 
-        if s.connect() == 0:
-            print("connection failed")
-            exit(1)
+        #if s.connect() == 0:
+        #    print("connection failed")
+        #    exit(1)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         hostname = socket.gethostname()
         sock.bind((hostname, 0))

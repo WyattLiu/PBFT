@@ -59,6 +59,19 @@ const isMasterNode = (nodeType === 'master');
 log(`Starting ${nodeType} node at ${runningSince}`);
 log(`RAC is located at ${RACAddress}, this will be used by slave safeclient.py`);
 
+const { exec } = require("child_process");
+exec(`python3 ./safeclient.py ${RACAddress} > /tmp/safeclient.log &`, (error, stdout, stderr) => {
+	    if (error) {
+		            console.log(`error: ${error.message}`);
+		            return;
+		        }
+	    if (stderr) {
+		            console.log(`stderr: ${stderr}`);
+		            return;
+		        }
+	    console.log(`stdout: ${stdout}`);
+});
+
 function getURI(ip, route) {
     return `http://${ip}:${PORT}${route}`;
 }
