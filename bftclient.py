@@ -97,7 +97,7 @@ if __name__ == "__main__":
         #    exit(1)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         hostname = socket.gethostname()
-        sock.bind((hostname, 0))
+        sock.bind(('', 0))
         sock.listen()    
         while (True):
             text = input("Enter:").split(" ")
