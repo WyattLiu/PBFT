@@ -1,3 +1,8 @@
+# Modified PBFT layer for RAC (CRDT) 
+
+Client interface is forking https://github.com/yunhaom94/rKVCRDT
+
+
 # Practical Byzantine Fault Tolerance
 PBFT is a consensus algorithm [used by some of the biggest Blockchains](https://blockonomi.com/practical-byzantine-fault-tolerance/).
 
