@@ -134,10 +134,13 @@ if __name__ == "__main__":
             print("Forwarding to BFT: " + str(text) + " located at: " + bft_addr)
             port = sock.getsockname()[1]
             print("Tell pbft my hostname: " + str(hostname) + " port: " + str(port))
-            text = str(hostname) + " " + str(port) + " " + ' '.join(text)
+            pbft_host = bft_addr.split(":")[0]
+            print("Showing pbft my intension is for " + str(pbft_host))
+            text = str(pbft_host) + " " + str(hostname) + " " + str(port) + " " + ' '.join(text)
             
             string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + text + '"}}'
             print("Raw json forwarded " + string_to_send)
+            
             r = requests.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send)
             conn, addr = sock.accept()
             binary_data = conn.recv(1024)

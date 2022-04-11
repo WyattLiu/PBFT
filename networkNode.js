@@ -263,6 +263,9 @@ app.post('/validate', function (req, res) {
 			// need to forward
 			var block = blockchain.chain[newBlockIndex-1];
 			payload = JSON.stringify(block.carData)
+			var list_payload = payload.toString().split(' ');
+			var intent = list_payload[0];
+			log(`Intented server is ${intent}`);
 			log(`Forwarding CRDT payload: ${payload}`);
 			const Net = require('net');
 			const port = 60003;
