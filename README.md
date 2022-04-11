@@ -6,7 +6,7 @@ Client interface is forking https://github.com/yunhaom94/rKVCRDT
 bftclient.py -> one of the pbft node (through a safeclient spawn in localhost) -> RAC
 
 # Flow
-1. bftclient uses POST to communicate with a pbft node, pbft sees the cmd as a payload which includes the port and hostname the bftclient is listening for callback.
+1. bftclient uses POST to communicate with a pbft node, pbft sees the cmd as a payload which includes the port and hostname the bftclient is listening for callback. client also indicate which pbft is meant to forward the requst to avoid racing
 2. After voting is completed and the pbft nodes reached concensus, the request (with client hostname+port) then forwarded to a localhost spawned safeclient.py using socket.
 3. The safeclient then communicate using socket with RAC and get the result natively using socket (with client hostname+port).
 4. The safeclient then pass the result (with client hostname+port) back with POST to the pbft node
