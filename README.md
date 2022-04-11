@@ -17,8 +17,7 @@ bftclient.py -> one of the pbft node (through a safeclient spawn in localhost) -
 bftclient.py
 ```sh
 python3 ./bftclient.py  127.0.0.1:50000 127.0.0.1:3002
-arg1 = RAC address (not using it, just for dev testing)
-arg2 = A PBFT node, could be anyone of the group
+arg1 = A PBFT node, could be anyone of the group
 ```
 PBFT, it consists node which may require a few npm install XXX to get it working
 ```sh
@@ -27,9 +26,9 @@ arg1 = master node that can make block -> needed to be master
 arg2 = full, store the entire chain, keep as it is
 arg3 = my addr
 arg4 = master addr
-arg5 = RAC address (not using it, just for dev testing)
+arg5 = RAC address (not using it, just pass it along to safeclient.py)
 ```
-safeclient.py
+safeclient.py will be called by PBFT
 ```sh
 python3 safeclient.py 127.0.0.1:50000
 arg1 = RAC address
