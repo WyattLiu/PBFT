@@ -1,3 +1,41 @@
+# Modified PBFT layer for RAC (CRDT) 
+
+Client interface is forking https://github.com/yunhaom94/rKVCRDT
+
+# Structure
+bftclient.py -> one of the pbft node (through a safeclient spawn in localhost) -> RAC
+
+# Flow
+1. bftclient uses POST to communicate with a pbft node, pbft sees the cmd as a payload which includes the port and hostname the bftclient is listening for callback.
+2. After voting is completed and the pbft nodes reached concensus, the request (with client hostname+port) then forwarded to a localhost spawned safeclient.py using socket.
+3. The safeclient then communicate using socket with RAC and get the result natively using socket (with client hostname+port).
+4. The safeclient then pass the result (with client hostname+port) back with POST to the pbft node
+5. The pbft node will directly pass the result back to client using the hostname and port used during the process.
+
+# CLI and arguments
+
+bftclient.py
+```sh
+python3 ./bftclient.py  127.0.0.1:50000 127.0.0.1:3002
+arg1 = RAC address (not using it, just for dev testing)
+arg2 = A PBFT node, could be anyone of the group
+```
+PBFT, it consists node which may require a few npm install XXX to get it working
+```sh
+node networkNode.js master full 192.168.1.104 this 192.168.1.104:50001
+arg1 = master node that can make block -> needed to be master
+arg2 = full, store the entire chain, keep as it is
+arg3 = my addr
+arg4 = master addr
+arg5 = RAC address (not using it, just for dev testing)
+```
+safeclient.py
+```sh
+python3 safeclient.py 127.0.0.1:50000
+arg1 = RAC address
+```
+Bind to localhost 60003
+
 # Practical Byzantine Fault Tolerance
 PBFT is a consensus algorithm [used by some of the biggest Blockchains](https://blockonomi.com/practical-byzantine-fault-tolerance/).
 
