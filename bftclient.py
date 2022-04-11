@@ -143,6 +143,7 @@ if __name__ == "__main__":
             binary_data = conn.recv(1024)
             text = binary_data.decode("utf-8")
             print(text)
+            conn.close()
             
         s.disconnect()
 

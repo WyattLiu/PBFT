@@ -214,10 +214,8 @@ app.post('/validate', function (req, res) {
     isEndpointEnabled(req, res, () => {
         try {
             votingStatistics.validationStarted();
-		log(`Not mine`)
         } catch(err) {
             votingStatistics = new VotingStatistics();
-        	log(`Mine`)
 	}
 
         if (!isValidMeta(req.body.originalBody)) {
@@ -270,11 +268,14 @@ app.post('/validate', function (req, res) {
 			const port = 60003;
 			const host = 'localhost';
 			const client = new Net.Socket();
-			client.connect({ port: port, host: host }, function() {
+			try {client.connect({ port: port, host: host }, function() {
 				console.log('TCP connection established with RAC');
 				client.write(payload);
-			});
-			client.on('data', function(chunk) {
+				client.end();
+			});} catch (error) {
+				console.error(error)
+			}
+			try {client.on('data', function(chunk) {
 				console.log(`Data received from the server: ${chunk.toString()}.`);
 				const Net = require('net');
 				var list_data = chunk.toString().split(' ');
@@ -283,13 +284,20 @@ app.post('/validate', function (req, res) {
 				list_data.splice(0,2);
 	                        const client_backward = new Net.Socket();
 				log(`Try connect back to bftclient: ${host} ${port}`)
-				client_backward.connect({ port: port, host: host }, function() {
+				try {
+					client_backward.connect({ port: port, host: host }, function() {
 				        console.log('TCP connection established with client');
 					client_backward.write(list_data.toString());
 					client_backward.end();
-		                });
+					console.log('TCP connection established with client end');
+		                	});
+				} catch (error) {
+					console.error(error);
+				}
 				client.end();
-			});
+			});} catch (error) {
+				console.error(error);
+			}
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
                         "nodeAddress": nodeIp
