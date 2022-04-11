@@ -262,10 +262,32 @@ app.post('/validate', function (req, res) {
 			// everyone votes yes
 			// need to forward
 			var block = blockchain.chain[newBlockIndex-1];
-			payload = JSON.stringify(block.carData.shift)
-			
-			var intent = JSON.stringify(block.carData[0]);
+			payload = (block.carData)['data'].split(' ');
+			intent = payload[0]
 			log(`Intented server is ${intent}`);
+			var os = require('os');
+			var networkInterfaces = os.networkInterfaces();
+			var intent_ok = 0;
+			for(var interface_ in networkInterfaces) {
+				// ipv4 should be located at 0
+				ipaddr = networkInterfaces[interface_][0]['address']
+				internal = networkInterfaces[interface_][0]['internal']
+				log(`${interface_} ip is ${ipaddr}`)
+				log(`interface internal? ${internal}`)
+				if(internal == true) {
+					log(`${ipaddr} is internal, we should not use it unless more checks`)
+				} else {
+					if (intent == ipaddr) {
+						log(`intent match`)
+						intent_ok = 1;
+					}
+				}
+			}
+			payload.shift()
+			log(`Removed intent payload ${payload}`)
+			payload = payload.join(' ')
+			payload = `{"data":"${payload}"}`
+			if(intent_ok) {
 			log(`Forwarding CRDT payload: ${payload}`);
 			const Net = require('net');
 			const port = 60003;
@@ -300,6 +322,7 @@ app.post('/validate', function (req, res) {
 				client.end();
 			});} catch (error) {
 				console.error(error);
+			}
 			}
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
