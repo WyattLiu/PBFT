@@ -126,7 +126,7 @@ if __name__ == "__main__":
                 print("Type \'{}\' is not valid".format(typecode))
                 continue
 
-            typeClass.operate(text)
+            print(typeClass.operate(text))
     
         s.disconnect()
 

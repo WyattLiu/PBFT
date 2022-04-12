@@ -1,1 +1,1 @@
-node networkNode.js master full wyatt-performance this 192.168.1.104:50000
+node networkNode.js master full 192.168.41.237 this 192.168.41.237:50000

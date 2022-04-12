@@ -8,8 +8,8 @@ sub resolve {
 	return $ip;
 }
 
-my $RAC = "192.168.1.104:50000";
-my @peers = ("wyatt-performance","wyatt-xperformance");
+my $RAC = "192.168.41.237:50000";
+my @peers = ("crdt-bft-1","crdt-bft-2","crdt-bft-3","crdt-bft-4","crdt-bft-5");
 
 my $leader = $peers[0];
 print "Leader is $leader, which is the first of the peers\n";
@@ -23,7 +23,7 @@ foreach my $peer (@peers) {
 	}
 	my $filename = "./run_$i.sh";
 	open(FH, '>', $filename) or die $!;	
-	print FH "node networkNode.js master full $peer $leader_addr $RAC\n";
+	print FH "node networkNode.js master full $peer_addr $leader_addr $RAC\n";
 	close FH;
 	`chmod +x $filename`;
 	$i++;
