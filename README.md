@@ -16,7 +16,7 @@ bftclient.py -> one of the pbft node (through a safeclient spawn in localhost) -
 
 bftclient.py
 ```sh
-python3 ./bftclient.py  127.0.0.1:50000 127.0.0.1:3002
+python3 ./bftclient.py 127.0.0.1:3002
 arg1 = A PBFT node, could be anyone of the group
 ```
 PBFT, it consists node which may require a few npm install XXX to get it working
