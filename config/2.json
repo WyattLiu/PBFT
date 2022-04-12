@@ -1,0 +1,32 @@
+[
+    {
+        "nodeid": 0,
+        "address": "crdt-bft-1",
+        "port": 50000,
+        "isSelf": "false"
+    },
+    {
+        "nodeid": 1,
+        "address": "crdt-bft-2",
+        "port": 50000,
+        "isSelf": "false"
+    },
+    {
+        "nodeid": 2,
+        "address": "crdt-bft-3",
+        "port": 50000,
+        "isSelf": "true"
+    },
+    {
+        "nodeid": 3,
+        "address": "crdt-bft-4",
+        "port": 50000,
+        "isSelf": "false"
+    },
+    {
+        "nodeid": 4,
+        "address": "crdt-bft-5",
+        "port": 50000,
+        "isSelf": "false"
+    }
+]
