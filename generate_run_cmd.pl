@@ -2,6 +2,12 @@
 use strict;
 use warnings;
 
+sub resolve {
+	my $addr = shift(@_);
+	my $ip = `nslookup $addr | egrep Address | tail -n 1 | awk '{print \$2}'`; chomp $ip;
+	return $ip;
+}
+
 my $RAC = "192.168.1.104:50000";
 my @peers = ("wyatt-performance","wyatt-xperformance");
 
@@ -10,7 +16,8 @@ print "Leader is $leader, which is the first of the peers\n";
 
 my $i = 0;
 foreach my $peer (@peers) {
-	my $leader_addr = $leader;
+	my $peer_addr = resolve($peer);
+	my $leader_addr = resolve($leader);
 	if($peer eq $leader) {
 		$leader_addr = "this";
 	}
