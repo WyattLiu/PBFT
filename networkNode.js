@@ -261,6 +261,7 @@ app.post('/validate', function (req, res) {
                     log(`Total validation time: ${votingStatistics.validationTotalTime}ms`);
 			// everyone votes yes
 			// need to forward
+			log(`looking at ${newBlockIndex-1} - 1`)
 			var block = blockchain.chain[newBlockIndex-1];
 			payload = (block.carData)['data'].split(' ');
 			intent = payload[0]
