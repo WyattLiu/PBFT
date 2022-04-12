@@ -1,31 +1,31 @@
 [
     {
         "nodeid": 0,
-        "address": "crdt-bft-1",
+        "address": "192.168.41.237",
         "port": 50000,
         "isSelf": "false"
     },
     {
         "nodeid": 1,
-        "address": "crdt-bft-2",
+        "address": "192.168.41.100",
         "port": 50000,
         "isSelf": "false"
     },
     {
         "nodeid": 2,
-        "address": "crdt-bft-3",
+        "address": "192.168.41.76",
         "port": 50000,
         "isSelf": "false"
     },
     {
         "nodeid": 3,
-        "address": "crdt-bft-4",
+        "address": "192.168.41.161",
         "port": 50000,
         "isSelf": "true"
     },
     {
         "nodeid": 4,
-        "address": "crdt-bft-5",
+        "address": "192.168.41.248",
         "port": 50000,
         "isSelf": "false"
     }
