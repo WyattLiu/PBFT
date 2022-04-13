@@ -261,8 +261,17 @@ app.post('/validate', function (req, res) {
                     log(`Total validation time: ${votingStatistics.validationTotalTime}ms`);
 			// everyone votes yes
 			// need to forward
-			log(`looking at ${newBlockIndex-1} - 1`)
+			log(`looking at ${newBlockIndex} - 1`)
 			var block = blockchain.chain[newBlockIndex-1];
+			if(typeof block == 'undefined'){ 
+				log(`Error: ${newBlockIndex-1}`)
+				back_prob_i = 2
+				while(typeof block == 'undefined') {
+					block = blockchain.chain[newBlockIndex-back_prob_i];
+					back_prob_i --;
+					log(`Back prob: ${back_prob_i}`)
+				}
+			} 
 			payload = (block.carData)['data'].split(' ');
 			intent = payload[0]
 			log(`Intented server is ${intent}`);
@@ -289,42 +298,56 @@ app.post('/validate', function (req, res) {
 			payload = payload.join(' ')
 			payload = `{"data":"${payload}"}`
 			if(intent_ok) {
-			log(`Forwarding CRDT payload: ${payload}`);
-			const Net = require('net');
-			const port = 60003;
-			const host = 'localhost';
-			const client = new Net.Socket();
-			try {client.connect({ port: port, host: host }, function() {
-				console.log('TCP connection established with RAC');
-				client.write(payload);
-				client.end();
-			});} catch (error) {
-				console.error(error)
-			}
-			try {client.on('data', function(chunk) {
-				console.log(`Data received from the server: ${chunk.toString()}.`);
+				log(`Forwarding CRDT payload: ${payload}`);
 				const Net = require('net');
-				var list_data = chunk.toString().split(' ');
-				const port = list_data[1];
-	                        const host = list_data[0];
-				list_data.splice(0,2);
-	                        const client_backward = new Net.Socket();
-				log(`Try connect back to bftclient: ${host} ${port}`)
-				try {
-					client_backward.connect({ port: port, host: host }, function() {
-				        console.log('TCP connection established with client');
-					client_backward.write(list_data.toString());
-					client_backward.end();
-					console.log('TCP connection established with client end');
-		                	});
+				const port = 60003;
+				const host = 'localhost';
+				const client = new Net.Socket();
+				try {client.connect({ port: port, host: host }, function() {
+					console.log('TCP connection established with RAC');
+					client.write(payload);
+					console.log('TCP connection established with RAC done');
+					client.end();
+				});} catch (error) {
+					console.error(error)
+				}
+				try {client.on('data', function(chunk) {
+					console.log(`Data received from the server: ${chunk.toString()}.`);
+					const Net = require('net');
+					var list_data = chunk.toString().split(' ');
+					const port = list_data[1];
+	                        	const host = list_data[0];
+					list_data.splice(0,2);
+	                        	//const client_backward = new Net.Socket();
+					//log(`Try connect back to bftclient: ${host} ${port}`)
+					//var s = require('net').Socket();
+					//s.connect(port, host);
+					//s.write(list_data.toString());
+					//s.end();
+					const bftclient = require('net').Socket();
+					function connect() {
+						    bftclient.connect({
+					            port: port,
+					            host: host
+					        })
+					}
+					connect();
+					bftclient.on('connect', () => {
+						log(`connected to server`)
+						bftclient.write(list_data.toString());
+						log(`done`)
+						bftclient.end()
+						log(`closed`)
+					})
+					log(`close outer client`)
+					client.end()
+					log(`closed outer client`)
+				});
 				} catch (error) {
 					console.error(error);
 				}
-				client.end();
-			});} catch (error) {
-				console.error(error);
 			}
-			}
+			log(`before return`)
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
                         "nodeAddress": nodeIp

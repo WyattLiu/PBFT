@@ -8,7 +8,7 @@ import json
 import timeit
 import subprocess
 from enum import Enum
-from client import *
+from bftclient import *
 from draw import *
 import numpy as np
 from multiprocessing import Process, Pool

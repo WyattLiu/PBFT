@@ -109,6 +109,8 @@ if __name__ == "__main__":
             payload = obj['data']
             print("Payload " + payload)
             text = payload.split(" ")
+            return_host = text[0]
+            return_port = text[1]
             return_addr = text[0] + " " + text[1]
             text = text[2:]
             print("Remote cmd split: " + str(text))
@@ -147,6 +149,10 @@ if __name__ == "__main__":
             print("Forward back " + result)
             conn.sendall(result.encode('utf-8'))
             conn.close()
+            #bfts = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #bfts.connect((return_host, int(return_port)))
+            #bfts.send(result.encode('utf-8'))
+            #bfts.close()
         s.disconnect()
 
 

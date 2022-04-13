@@ -20,49 +20,53 @@ class Server:
 
     def __init__(self, ip, port):
         self.num_timeout = 0
-        self.s = None
         self.ip = ip
         self.port = port
-
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s.bind(('', 0))
+        self.s.listen()
+        self.cb_hostname = socket.gethostname()
+        self.cb_port = port = self.s.getsockname()[1]
     def connect(self):
-        try:
-            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.s.connect((self.ip, self.port))
-            return 1
-        except Exception as e:
-            print(e)
-            return 0
-
-    def response(self) -> bytes:
-        try:
-            self.s.settimeout(60)
-            msg = self.s.recv(1024)
-            self.s.settimeout(None)
-        except socket.timeout:
-            self.disconnect()
-            if self.num_timeout < 5:
-                self.connect()
-                print("Timeout on receive")
-                self.num_timeout += 1
-            else:
-                raise socket.timeout
-            return "F"
-
-        return msg
-
-    def send(self, data: bytes):            
-        self.s.send(data)
-        res = self.response()
-        if res != "F":
-            return res_parse(res)
-        else:
-            return "F"
-
-
+        print("TODO:post")
+    def post(self, bft_addr, string_to_send):
+        r = requests.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send)
+    def pbft_send(self, text):
+        print("Forwarding to BFT: " + str(text) + " located at: " + str(self.ip) + ":" + str(self.port))
+        print("Tell pbft my hostname: " + str(self.cb_hostname) + " port: " + str(self.cb_port))
+        print("Showing pbft my intension is for " + str(self.ip))
+        text = str(self.ip) + " " + str(self.cb_hostname) + " " + str(self.cb_port) + " " + text
+        string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + text + '"}}'
+        print("Raw json forwarded " + string_to_send)
+        bft_addr = str(self.ip) + ":" + str(self.port)
+        print("Before Post")
+        self.post(bft_addr, string_to_send)
+        print("Before accept")
+        conn, addr = self.s.accept()
+        print("Before recv")
+        binary_data = conn.recv(1024)
+        print("Before decode")
+        text = binary_data.decode("utf-8")
+        print("Before close")
+        conn.close()
+        return text
+    def convert_back_plain_string(self, data):
+        raw_string = data.decode('utf-8')
+        print("Debug:" + raw_string)
+        raw_list = raw_string.splitlines()
+        res = ""
+        for i in raw_list:
+            test = i.split(':');
+            if(len(test) == 2):
+                print("i:" + i)
+                res += test[1] + " "
+        return res.strip()
+    def send(self, data: bytes):        
+        #time.sleep(1)
+        return self.pbft_send(self.convert_back_plain_string(data))
+        
     def disconnect(self):
-        self.s.close()        
-
+        print("Do nothing on disconnect")
 
 
 def isHelp(args):
@@ -85,20 +89,16 @@ if __name__ == "__main__":
             raise ValueError('wrong arg')
     
         # gc <key> <action> [value]
-        #address = sys.argv[1]
-        #host = address.split(":")[0]
-        #port = int(address.split(":")[1])
-        bft_addr = sys.argv[1]
+        address = sys.argv[1]
+        host = address.split(":")[0]
+        port = int(address.split(":")[1])
 
-        s = Server("localhost", 0)   
+        s = Server(host, port)   
 
-        #if s.connect() == 0:
-        #    print("connection failed")
-        #    exit(1)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        hostname = socket.gethostname()
-        sock.bind(('', 0))
-        sock.listen()    
+        if s.connect() == 0:
+            print("connection failed")
+            exit(1)
+
         while (True):
             text = input("Enter:").split(" ")
 
@@ -131,23 +131,8 @@ if __name__ == "__main__":
                 print("Type \'{}\' is not valid".format(typecode))
                 continue
 
-            print("Forwarding to BFT: " + str(text) + " located at: " + bft_addr)
-            port = sock.getsockname()[1]
-            print("Tell pbft my hostname: " + str(hostname) + " port: " + str(port))
-            pbft_host = bft_addr.split(":")[0]
-            print("Showing pbft my intension is for " + str(pbft_host))
-            text = str(pbft_host) + " " + str(hostname) + " " + str(port) + " " + ' '.join(text)
-            
-            string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + text + '"}}'
-            print("Raw json forwarded " + string_to_send)
-            
-            r = requests.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send)
-            conn, addr = sock.accept()
-            binary_data = conn.recv(1024)
-            text = binary_data.decode("utf-8")
-            print(text)
-            conn.close()
-            
+            print(typeClass.operate(text))
+    
         s.disconnect()
 
 
