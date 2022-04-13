@@ -422,6 +422,7 @@ class TestRunner():
     def worker(self, crdt, list_reqs):
         temp = []
         last_rid = {}
+        print("crdt " + str(crdt)+" len reqs:"+ str(len(list_reqs)))
         for req in list_reqs:
             if self.sleeptime > 0:
                 time.sleep(self.sleeptime)
@@ -550,11 +551,11 @@ def run_benchmark(workloadfile) -> Results:
 
     
     
-    #print("Throughput:")
-    #print(tr.results.tp)
-    #print("Median Latency")
+    print("Throughput:")
+    print(tr.results.tp)
+    print("Median Latency")
     #print(np.median(tr.results.get_latency()))
-    #print("Latency std")
+    print("Latency std")
     #print(np.std(tr.results.get_latency()))
 
     tr.close_connection()
