@@ -27,38 +27,41 @@ class Server:
         self.s.listen()
         self.cb_hostname = socket.gethostname()
         self.cb_port = port = self.s.getsockname()[1]
+    def debug_print(self, str):
+        if(0):
+            print(str)
     def connect(self):
-        print("TODO:post")
+        self.debug_print("TODO:post")
     def post(self, bft_addr, string_to_send):
         r = requests.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send)
     def pbft_send(self, text):
-        print("Forwarding to BFT: " + str(text) + " located at: " + str(self.ip) + ":" + str(self.port))
-        print("Tell pbft my hostname: " + str(self.cb_hostname) + " port: " + str(self.cb_port))
-        print("Showing pbft my intension is for " + str(self.ip))
+        self.debug_print("Forwarding to BFT: " + str(text) + " located at: " + str(self.ip) + ":" + str(self.port))
+        self.debug_print("Tell pbft my hostname: " + str(self.cb_hostname) + " port: " + str(self.cb_port))
+        self.debug_print("Showing pbft my intension is for " + str(self.ip))
         text = str(self.ip) + " " + str(self.cb_hostname) + " " + str(self.cb_port) + " " + text
         string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + text + '"}}'
-        print("Raw json forwarded " + string_to_send)
+        self.debug_print("Raw json forwarded " + string_to_send)
         bft_addr = str(self.ip) + ":" + str(self.port)
-        print("Before Post")
+        self.debug_print("Before Post")
         self.post(bft_addr, string_to_send)
-        print("Before accept")
+        self.debug_print("Before accept")
         conn, addr = self.s.accept()
-        print("Before recv")
+        self.debug_print("Before recv")
         binary_data = conn.recv(1024)
-        print("Before decode")
+        self.debug_print("Before decode")
         text = binary_data.decode("utf-8")
-        print("Before close")
+        self.debug_print("Before close")
         conn.close()
         return text
     def convert_back_plain_string(self, data):
         raw_string = data.decode('utf-8')
-        print("Debug:" + raw_string)
+        self.debug_print("Debug:" + raw_string)
         raw_list = raw_string.splitlines()
         res = ""
         for i in raw_list:
             test = i.split(':');
             if(len(test) == 2):
-                print("i:" + i)
+                self.debug_print("i:" + i)
                 res += test[1] + " "
         return res.strip()
     def send(self, data: bytes):        
@@ -66,7 +69,7 @@ class Server:
         return self.pbft_send(self.convert_back_plain_string(data))
         
     def disconnect(self):
-        print("Do nothing on disconnect")
+        self.debug_print("Do nothing on disconnect")
 
 
 def isHelp(args):
