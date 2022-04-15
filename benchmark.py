@@ -386,7 +386,7 @@ class TestRunner():
             i += 1
             if i == len(self.nodes):
                 i = 0
-        print("Connection complete")
+        print("Connection complete: " + str(res))
         return res
 
     def init_data(self):

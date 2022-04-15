@@ -1,6 +1,6 @@
 {
     "!!!!!CHANGE_FILE_NAME_TO_\"workload.json\"!!!!!!!": 0,
-    "nodes": ["192.168.41.237:3002"],
+    "nodes": ["192.168.41.100:3002"],
     "client_multiplier": 1,
 
     "typecode": "rc",

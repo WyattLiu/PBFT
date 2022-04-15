@@ -27,13 +27,15 @@ class Server:
         self.s.listen()
         self.cb_hostname = socket.gethostname()
         self.cb_port = port = self.s.getsockname()[1]
+        self.debug_print("Callback is: " + str(self.cb_hostname) + ":" + str(self.cb_port))
     def debug_print(self, str):
-        if(0):
+        if(1):
             print(str)
     def connect(self):
         self.debug_print("TODO:post")
     def post(self, bft_addr, string_to_send):
         r = requests.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send)
+        self.debug_print(str(r))
     def pbft_send(self, text):
         self.debug_print("Forwarding to BFT: " + str(text) + " located at: " + str(self.ip) + ":" + str(self.port))
         self.debug_print("Tell pbft my hostname: " + str(self.cb_hostname) + " port: " + str(self.cb_port))
@@ -52,6 +54,7 @@ class Server:
         text = binary_data.decode("utf-8")
         self.debug_print("Before close")
         conn.close()
+        print("answer: " + text)
         return text
     def convert_back_plain_string(self, data):
         raw_string = data.decode('utf-8')

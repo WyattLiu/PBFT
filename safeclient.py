@@ -147,12 +147,12 @@ if __name__ == "__main__":
                 print("Result: " + result)
             result = return_addr + " " + result
             print("Forward back " + result)
-            conn.sendall(result.encode('utf-8'))
+            #conn.sendall(result.encode('utf-8'))
             conn.close()
-            #bfts = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #bfts.connect((return_host, int(return_port)))
-            #bfts.send(result.encode('utf-8'))
-            #bfts.close()
+            bfts = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            bfts.connect((return_host, int(return_port)))
+            bfts.send(result.encode('utf-8'))
+            bfts.close()
         s.disconnect()
 
 

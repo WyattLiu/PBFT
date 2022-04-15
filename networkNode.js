@@ -27,7 +27,9 @@ const log = _str => {
     if (typeof _str === 'object') {
         _str = JSON.stringify(_str);
     }
-    console.log(`[${getCurrentTimestamp()}]: ${_str}`);
+	if(0) {
+    		console.log(`[${getCurrentTimestamp()}]: ${_str}`);
+	}
 };
 
 function removeItem(array, val) {
@@ -313,12 +315,13 @@ app.post('/validate', function (req, res) {
 				}
 				try {client.on('data', function(chunk) {
 					console.log(`Data received from the server: ${chunk.toString()}.`);
-					const Net = require('net');
+					/*const Net = require('net');
 					var list_data = chunk.toString().split(' ');
 					const port = list_data[1];
 	                        	const host = list_data[0];
 					list_data.splice(0,2);
-	                        	//const client_backward = new Net.Socket();
+	                        	
+					//const client_backward = new Net.Socket();
 					//log(`Try connect back to bftclient: ${host} ${port}`)
 					//var s = require('net').Socket();
 					//s.connect(port, host);
@@ -342,6 +345,7 @@ app.post('/validate', function (req, res) {
 					log(`close outer client`)
 					client.end()
 					log(`closed outer client`)
+					*/
 				});
 				} catch (error) {
 					console.error(error);
