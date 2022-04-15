@@ -14,7 +14,7 @@ from type.Performance import Performance
 from type.helper import res_parse
 from type.Type import Type
 from type.Action import Action
-
+from requests.adapters import HTTPAdapter, Retry
 
 class Server:
 
@@ -28,13 +28,18 @@ class Server:
         self.cb_hostname = socket.gethostname()
         self.cb_port = port = self.s.getsockname()[1]
         self.debug_print("Callback is: " + str(self.cb_hostname) + ":" + str(self.cb_port))
+        self.session = requests.Session()
+        retries = Retry(total=5,
+                backoff_factor=0.1,
+                status_forcelist=[ 500, 502, 503, 504 ])
+        self.session.mount('http://', HTTPAdapter(max_retries=retries))
     def debug_print(self, str):
         if(1):
             print(str)
     def connect(self):
         self.debug_print("TODO:post")
     def post(self, bft_addr, string_to_send):
-        r = requests.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send)
+        r = self.session.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send, timeout = 1)
         self.debug_print(str(r))
     def pbft_send(self, text):
         self.debug_print("Forwarding to BFT: " + str(text) + " located at: " + str(self.ip) + ":" + str(self.port))

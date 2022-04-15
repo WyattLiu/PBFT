@@ -27,7 +27,7 @@ const log = _str => {
     if (typeof _str === 'object') {
         _str = JSON.stringify(_str);
     }
-	if(0) {
+	if(1) {
     		console.log(`[${getCurrentTimestamp()}]: ${_str}`);
 	}
 };
@@ -261,97 +261,6 @@ app.post('/validate', function (req, res) {
                     log(`Vote transmission results:\n${JSON.stringify(body)}`);
                     votingStatistics.validationResultsReceived();
                     log(`Total validation time: ${votingStatistics.validationTotalTime}ms`);
-			// everyone votes yes
-			// need to forward
-			log(`looking at ${newBlockIndex} - 1`)
-			var block = blockchain.chain[newBlockIndex-1];
-			if(typeof block == 'undefined'){ 
-				log(`Error: ${newBlockIndex-1}`)
-				back_prob_i = 2
-				while(typeof block == 'undefined') {
-					block = blockchain.chain[newBlockIndex-back_prob_i];
-					back_prob_i --;
-					log(`Back prob: ${back_prob_i}`)
-				}
-			} 
-			payload = (block.carData)['data'].split(' ');
-			intent = payload[0]
-			log(`Intented server is ${intent}`);
-			var os = require('os');
-			var networkInterfaces = os.networkInterfaces();
-			var intent_ok = 0;
-			for(var interface_ in networkInterfaces) {
-				// ipv4 should be located at 0
-				ipaddr = networkInterfaces[interface_][0]['address']
-				internal = networkInterfaces[interface_][0]['internal']
-				log(`${interface_} ip is ${ipaddr}`)
-				log(`interface internal? ${internal}`)
-				if(internal == true) {
-					log(`${ipaddr} is internal, we should not use it unless more checks`)
-				} else {
-					if (intent == ipaddr) {
-						log(`intent match`)
-						intent_ok = 1;
-					}
-				}
-			}
-			payload.shift()
-			log(`Removed intent payload ${payload}`)
-			payload = payload.join(' ')
-			payload = `{"data":"${payload}"}`
-			if(intent_ok) {
-				log(`Forwarding CRDT payload: ${payload}`);
-				const Net = require('net');
-				const port = 60003;
-				const host = 'localhost';
-				const client = new Net.Socket();
-				try {client.connect({ port: port, host: host }, function() {
-					console.log('TCP connection established with RAC');
-					client.write(payload);
-					console.log('TCP connection established with RAC done');
-					client.end();
-				});} catch (error) {
-					console.error(error)
-				}
-				try {client.on('data', function(chunk) {
-					console.log(`Data received from the server: ${chunk.toString()}.`);
-					/*const Net = require('net');
-					var list_data = chunk.toString().split(' ');
-					const port = list_data[1];
-	                        	const host = list_data[0];
-					list_data.splice(0,2);
-	                        	
-					//const client_backward = new Net.Socket();
-					//log(`Try connect back to bftclient: ${host} ${port}`)
-					//var s = require('net').Socket();
-					//s.connect(port, host);
-					//s.write(list_data.toString());
-					//s.end();
-					const bftclient = require('net').Socket();
-					function connect() {
-						    bftclient.connect({
-					            port: port,
-					            host: host
-					        })
-					}
-					connect();
-					bftclient.on('connect', () => {
-						log(`connected to server`)
-						bftclient.write(list_data.toString());
-						log(`done`)
-						bftclient.end()
-						log(`closed`)
-					})
-					log(`close outer client`)
-					client.end()
-					log(`closed outer client`)
-					*/
-				});
-				} catch (error) {
-					console.error(error);
-				}
-			}
-			log(`before return`)
                     res.json({
                         note: `Block ${newBlockHash} processed and vote ${vote} transmitted to the network`,
                         "nodeAddress": nodeIp
@@ -438,7 +347,24 @@ app.post('/createBlock', function (req, res) {
                     log(`Block insertion results:\n${JSON.stringify(body)}`);
                     votingStatistics.blockCreationResultsReceived();
                     log(`Create block total time: ${votingStatistics.blockCreationTotalTime}ms`);
-
+		    // forward here
+			payload = (createdBlock.carData)['data'].split(' ');
+			payload.shift()
+			payload = payload.join(' ')
+			payload = `{"data":"${payload}"}`
+			log(`Forwarding CRDT payload: ${payload}`);
+			const Net = require('net');
+			const port = 60003;
+			const host = 'localhost';
+			const client = new Net.Socket();
+			try {client.connect({ port: port, host: host }, function() {
+				console.log('TCP connection established with RAC');
+				client.write(payload);
+				console.log('TCP connection established with RAC done');
+				client.end();
+			});} catch (error) {
+				console.error(error)
+			}
                     res.json({
                         note: `Block ${createdBlock['hash']} created and transmitted to the network for validation`,
                         block: createdBlock,
