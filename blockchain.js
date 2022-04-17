@@ -56,8 +56,8 @@ Blockchain.prototype.createBlock = function(lastBlockHash, carPlate, carData, ti
 }
 
 Blockchain.prototype.logBuffer = function() {
-    console.log(`Current buffer size: ${Object.keys(this.buffer).length}`);
-    console.log(`Current voting buffer size: ${Object.keys(this.votingBuffer).length}`);
+    //console.log(`Current buffer size: ${Object.keys(this.buffer).length}`);
+    //console.log(`Current voting buffer size: ${Object.keys(this.votingBuffer).length}`);
 }
 
 Blockchain.prototype.putBlockOnHold = function(block) {
@@ -81,7 +81,7 @@ Blockchain.prototype.putBlockOnHold = function(block) {
             });
         }
     } else {
-        console.log(`Block ${block['hash']} already in buffer`);
+        //console.log(`Block ${block['hash']} already in buffer`);
     }
 
     this.logBuffer();
@@ -104,7 +104,7 @@ Blockchain.prototype.holdVoteOnBuffer = function(blockHash, voteInfo) {
 // returns current number of yes votes for block on voting after new vote is processed
 Blockchain.prototype.processVote = function(blockHash, blockIndex, nodeAddress, vote) {
     if (this.isBlockInBlockchain(blockHash, blockIndex)) {              // this block was already accepted (can happen if a vote comes after consensus was already achieved)
-        console.log(`Block ${blockHash} already accepted. Index: ${blockIndex}`);
+        //console.log(`Block ${blockHash} already accepted. Index: ${blockIndex}`);
         return -1;
     }
 

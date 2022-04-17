@@ -23,6 +23,7 @@ class Server:
         self.ip = ip
         self.port = port
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #self.s.settimeout(1)
         self.s.bind(('', 0))
         self.s.listen()
         self.cb_hostname = socket.gethostname()
@@ -34,13 +35,18 @@ class Server:
                 status_forcelist=[ 500, 502, 503, 504 ])
         self.session.mount('http://', HTTPAdapter(max_retries=retries))
     def debug_print(self, str):
-        if(1):
+        if(0):
             print(str)
     def connect(self):
         self.debug_print("TODO:post")
-    def post(self, bft_addr, string_to_send):
-        r = self.session.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send, timeout = 1)
-        self.debug_print(str(r))
+    def post(self, bft_addr, string_to_send, step):
+        try :
+            r = self.session.post("http://"+bft_addr+"/createblock", headers={"Content-Type" : "application/json"}, data = string_to_send, timeout = 1)
+            self.debug_print(str(r))
+        except requests.exceptions.Timeout:
+            self.debug_print("timeout POST: " + str(step))
+            if(step < 5):
+                self.post(bft_addr,string_to_send, step + 1)
     def pbft_send(self, text):
         self.debug_print("Forwarding to BFT: " + str(text) + " located at: " + str(self.ip) + ":" + str(self.port))
         self.debug_print("Tell pbft my hostname: " + str(self.cb_hostname) + " port: " + str(self.cb_port))
@@ -50,7 +56,7 @@ class Server:
         self.debug_print("Raw json forwarded " + string_to_send)
         bft_addr = str(self.ip) + ":" + str(self.port)
         self.debug_print("Before Post")
-        self.post(bft_addr, string_to_send)
+        self.post(bft_addr, string_to_send, 0)
         self.debug_print("Before accept")
         conn, addr = self.s.accept()
         self.debug_print("Before recv")
@@ -59,7 +65,7 @@ class Server:
         text = binary_data.decode("utf-8")
         self.debug_print("Before close")
         conn.close()
-        print("answer: " + text)
+        self.debug_print("answer: " + text)
         return text
     def convert_back_plain_string(self, data):
         raw_string = data.decode('utf-8')
@@ -78,7 +84,7 @@ class Server:
         
     def disconnect(self):
         self.debug_print("Do nothing on disconnect")
-
+        self.s.close()
 
 def isHelp(args):
     return len(sys.argv) == 2 and (args[1] == '--help' or args[1] == '-h')

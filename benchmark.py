@@ -75,8 +75,8 @@ class Results():
                 flag = False
 
     def get_latency(self):        
-        return reject_outliers(reject_outliers(np.array(self.latency_result)))
-
+       # return reject_outliers(reject_outliers(np.array(self.latency_result)))
+        return np.array(self.latency_result, dtype=object)
 
 class ExperimentData():
     def __init__(self, num_objects, keys = []) -> None:
@@ -554,7 +554,7 @@ def run_benchmark(workloadfile) -> Results:
     print("Throughput:")
     print(tr.results.tp)
     print("Median Latency")
-    #print(np.median(tr.results.get_latency()))
+    #print((tr.results.get_latency()))
     print("Latency std")
     #print(np.std(tr.results.get_latency()))
 

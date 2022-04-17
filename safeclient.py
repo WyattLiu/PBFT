@@ -5,6 +5,8 @@ import random
 import time
 import sys
 import json
+from _thread import *
+import threading
 from type.GCounter import PNCounter
 from type.RCounter import RCounter
 from type.ORSet import ORSet
@@ -63,7 +65,9 @@ class Server:
     def disconnect(self):
         self.s.close()        
 
-
+def debug_print(str):
+    if(0):
+        print(str)
 
 def isHelp(args):
     return len(sys.argv) == 2 and (args[1] == '--help' or args[1] == '-h')
@@ -75,6 +79,61 @@ def helpMessage():
         "  python client.py 127.0.0.1:<port number> \n\n" + 
         "  [For Example] python client.py 127.0.0.1:<port number> \n")
     print(string)
+
+def threaded(conn):
+    binary_data = conn.recv(1024)
+    conn.close()
+    text = binary_data.decode("utf-8")
+    obj = json.loads(text)
+    payload = obj['data']
+    debug_print("Payload " + payload)
+    text = payload.split(" ")
+    return_host = text[0]
+    return_port = text[1]
+    return_addr = text[0] + " " + text[1]
+    text = text[2:]
+    debug_print("Remote cmd split: " + str(text))
+    typecode = text[0]
+    typeClass = None
+    if (typecode == Type.DISCONNECT):
+        s.disconnect()
+        exit(0)
+        uid = text[1]
+        opcode = text[2]
+        typeClass = None
+
+    if (typecode == Type.PNCOUNTER):
+        typeClass = PNCounter(s)
+        
+    elif (typecode == Type.RCOUNTER):
+        typeClass = RCounter(s)
+                        
+    elif (typecode == Type.ORSET):
+        typeClass = ORSet(s)
+        
+    elif (typecode == Type.RGRAPH):
+        typeClass = RGraph(s)
+                    
+    elif (typecode == Type.PERFORMANCE):
+        typeClass = Performance(s)
+        
+    else:
+        result = str("Type \'{}\' is not valid".format(typecode))
+    
+    if(1):
+        debug_print("Operating with cmd: " + str(text))
+        if(typeClass != None):
+            result = typeClass.operate(text)
+        debug_print("Result: " + result)
+        result = return_addr + " " + result
+        debug_print("Forward back " + result)
+        #conn.sendall(result.encode('utf-8'))
+        #conn.close()
+        bfts = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        bfts.connect((return_host, int(return_port)))
+        bfts.send(result.encode('utf-8'))
+        bfts.close()
+
 
 if __name__ == "__main__":
     if isHelp(sys.argv):
@@ -88,7 +147,7 @@ if __name__ == "__main__":
         address = sys.argv[1]
         host = address.split(":")[0]
         port = int(address.split(":")[1])
-        print("Pased addr: " + host + " port: " + str(port))
+        debug_print("Pased addr: " + host + " port: " + str(port))
         s = Server(host, port)   
         if s.connect() == 0:
             print("connection failed")
@@ -103,56 +162,8 @@ if __name__ == "__main__":
         while (True):
             conn, addr = sock.accept()
             #text = input("Enter:").split(" ")
-            binary_data = conn.recv(1024)
-            text = binary_data.decode("utf-8")
-            obj = json.loads(text)
-            payload = obj['data']
-            print("Payload " + payload)
-            text = payload.split(" ")
-            return_host = text[0]
-            return_port = text[1]
-            return_addr = text[0] + " " + text[1]
-            text = text[2:]
-            print("Remote cmd split: " + str(text))
-            typecode = text[0]
+            start_new_thread(threaded, (conn,))
 
-            if (typecode == Type.DISCONNECT):
-                s.disconnect()
-                exit(0)
-
-            uid = text[1]
-            opcode = text[2]
-            typeClass = None
-
-            if (typecode == Type.PNCOUNTER):
-                typeClass = PNCounter(s)
-
-            elif (typecode == Type.RCOUNTER):
-                typeClass = RCounter(s)
-                    
-            elif (typecode == Type.ORSET):
-                typeClass = ORSet(s)
-
-            elif (typecode == Type.RGRAPH):
-                typeClass = RGraph(s)
-
-            elif (typecode == Type.PERFORMANCE):
-                typeClass = Performance(s)
-
-            else:
-                result = str("Type \'{}\' is not valid".format(typecode))
-            if typeClass != None:
-                print("Operating with cmd: " + str(text))
-                result = typeClass.operate(text)
-                print("Result: " + result)
-            result = return_addr + " " + result
-            print("Forward back " + result)
-            #conn.sendall(result.encode('utf-8'))
-            conn.close()
-            bfts = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            bfts.connect((return_host, int(return_port)))
-            bfts.send(result.encode('utf-8'))
-            bfts.close()
         s.disconnect()
 
 

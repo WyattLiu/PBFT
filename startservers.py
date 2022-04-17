@@ -18,7 +18,7 @@ from pathlib import Path
 SERVER_PATH = str(Path(__file__).resolve().parent.parent.parent) + "/RAC"
 BUILD_PATH = SERVER_PATH + "/bin/Release/net5.0/Project_RAC"
 REMOTE_SCRIPT_PATH = "/home/ubuntu/Project_RAC/RACClient/src/startservers.py"
-START_PORT = 5000
+START_PORT = 3002
 
 SSH_KEY_FILE = "/home/ubuntu/cc.pem"
 
@@ -83,7 +83,6 @@ def build_server():
             ["dotnet", "build", "--configuration", "Release", SERVER_PATH])
 
 def start_server(num_server, servers_list = []) -> list:
-
     if not Path(BUILD_PATH).exists():
         print("RAC not built")
         build_server()

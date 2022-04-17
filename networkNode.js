@@ -27,7 +27,7 @@ const log = _str => {
     if (typeof _str === 'object') {
         _str = JSON.stringify(_str);
     }
-	if(1) {
+	if(0) {
     		console.log(`[${getCurrentTimestamp()}]: ${_str}`);
 	}
 };
@@ -328,8 +328,7 @@ app.post('/createBlock', function (req, res) {
             }
 
             log(`Timestamp used: ${timestamp}`);
-            const createdBlock = blockchain.createBlock(blockchain.getLastBlock()['hash'], req.body.carPlate, req.body.block, timestamp);
-		log(`Payload to forward ${req.body.block}`)
+		const createdBlock = blockchain.createBlock(blockchain.getLastBlock()['hash'], req.body.carPlate, req.body.block, timestamp);
             votingStatistics.blockCreationLocalFinished();
             log(`Block creation time: ${votingStatistics.blockCreationLocalTime}ms`);
 
@@ -348,7 +347,7 @@ app.post('/createBlock', function (req, res) {
                     votingStatistics.blockCreationResultsReceived();
                     log(`Create block total time: ${votingStatistics.blockCreationTotalTime}ms`);
 		    // forward here
-			payload = (createdBlock.carData)['data'].split(' ');
+			var payload = (createdBlock.carData)['data'].split(' ');
 			payload.shift()
 			payload = payload.join(' ')
 			payload = `{"data":"${payload}"}`
@@ -358,13 +357,16 @@ app.post('/createBlock', function (req, res) {
 			const host = 'localhost';
 			const client = new Net.Socket();
 			try {client.connect({ port: port, host: host }, function() {
-				console.log('TCP connection established with RAC');
+				log('TCP connection established with RAC');
 				client.write(payload);
-				console.log('TCP connection established with RAC done');
+				log(`Forwarded CRDT payload: ${payload}`);
+				log('TCP connection established with RAC done');
 				client.end();
 			});} catch (error) {
+				log('TCP connection established with RAC done error');
 				console.error(error)
-			}
+			} 
+			log(`Forwarded end CRDT payload: ${payload}`);
                     res.json({
                         note: `Block ${createdBlock['hash']} created and transmitted to the network for validation`,
                         block: createdBlock,
