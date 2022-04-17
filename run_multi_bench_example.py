@@ -22,15 +22,15 @@ if __name__ == "__main__":
         "client_multiplier": int(client),
 
         "typecode": "pnc",
-        "total_objects": 1000,
+        "total_objects": 100,
 
         "prep_ops_pre_obj": 10,
         "num_reverse": [0],
         "prep_ratio": [1, 0, 0],
 
 
-        "ops_per_object": 100,
-        "op_ratio": [[0.15, 0.15, 0.7]],
+        "ops_per_object": 1000,
+        "op_ratio": [[0.25, 0.25, 0.5]],
         "target_throughput": 0
     }
 
