@@ -56,7 +56,7 @@ class VotingStatistics {
             'blockCreationTotalTime': this.blockCreationTotalTime,
             'timeScale': 'ms',
             'numberOfNodesInNetwork': numOfNodes,
-            'detailedTimestamps': {
+            /*'detailedTimestamps': {
                 'startedCreationTimestamp': prettyTimestamp(this.startedCreationTimestamp),
                 'localBlockCreationFinishedTimestamp': prettyTimestamp(this.localBlockCreationFinishedTimestamp),
                 'startedConsensusTimestamp': prettyTimestamp(this.startedConsensusTimestamp),
@@ -66,13 +66,13 @@ class VotingStatistics {
                 'validationFinishedTimestamp': prettyTimestamp(this.validationFinishedTimestamp),
                 'resultsReceivedTimestamp': prettyTimestamp(this.resultsReceivedTimestamp),
                 'receivedVotesTimestamps': this.votes
-            }
+            }*/
         }
     }
 }
 
 function prettyTimestamp(ts) {
-    return ts.toISOString().replace('T', ' ').replace('Z', '');
+	return ts.toISOString().replace('T', ' ').replace('Z', '');
 }
 
 module.exports = VotingStatistics

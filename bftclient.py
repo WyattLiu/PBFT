@@ -52,7 +52,9 @@ class Server:
         self.debug_print("Tell pbft my hostname: " + str(self.cb_hostname) + " port: " + str(self.cb_port))
         self.debug_print("Showing pbft my intension is for " + str(self.ip))
         text = str(self.ip) + " " + str(self.cb_hostname) + " " + str(self.cb_port) + " " + text
-        string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + text + '"}}'
+        string_to_send = '{"timestamp": "2001-01-01 06:00:00", "carPlate": "<plate>", "block": {"data": "' + text + '"}}'
+        #string_to_send = '{"carPlate": "<plate>", "block": {"data": "' + text + '"}}'
+        
         self.debug_print("Raw json forwarded " + string_to_send)
         bft_addr = str(self.ip) + ":" + str(self.port)
         self.debug_print("Before Post")

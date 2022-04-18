@@ -27,7 +27,7 @@ const log = _str => {
     if (typeof _str === 'object') {
         _str = JSON.stringify(_str);
     }
-	if(0) {
+	if(1) {
     		console.log(`[${getCurrentTimestamp()}]: ${_str}`);
 	}
 };
