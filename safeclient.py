@@ -66,7 +66,7 @@ class Server:
         self.s.close()        
 
 def debug_print(str):
-    if(0):
+    if(1):
         print(str)
 
 def isHelp(args):
@@ -162,8 +162,11 @@ if __name__ == "__main__":
         while (True):
             conn, addr = sock.accept()
             #text = input("Enter:").split(" ")
-            start_new_thread(threaded, (conn,))
-
+            #start_new_thread(threaded, (conn,))
+            binary_data = conn.recv(1024)
+            conn.close()
+            #text = binary_data.decode("utf-8")        
+            print(str(binary_data))
         s.disconnect()
 
 
