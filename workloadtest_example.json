@@ -1,7 +1,7 @@
 {
     "!!!!!CHANGE_FILE_NAME_TO_\"workload.json\"!!!!!!!": 0,
-    "nodes": ["192.168.41.237:3002"],
-    "client_multiplier": 5,
+    "nodes": ["192.168.41.41:3002"],
+    "client_multiplier": 1,
 
     "typecode": "pnc",
     "total_objects" : 1000,

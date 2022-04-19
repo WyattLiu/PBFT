@@ -36,7 +36,7 @@ public class MapInteractiveClient {
 					String line;
 					byte[] array = new byte[100];
 					int size = in.read(array,0,100);
-					value = "";
+					value = "d";
 					key = new String(array).trim();
 					// System.out.println("cmd: " + key + "size: " + size);
 					result = map.put(key, value);
