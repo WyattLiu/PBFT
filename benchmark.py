@@ -12,7 +12,7 @@ from bftclientsmart import *
 from draw import *
 import numpy as np
 from multiprocessing import Process, Pool
-
+from collections import defaultdict
 
 KEY_LEN = 5
 STR_LEN = 10
@@ -356,6 +356,7 @@ class TestRunner():
         self.nodes = nodes
         self.num_nodes = len(nodes)
         self.num_clients = math.ceil(self.num_nodes * multiplier)
+        self.multiplier = multiplier
         self.data = data
         self.connections = self._connect()
         self.crdts = [self.data.CRDT(s) for s in self.connections]
@@ -402,8 +403,67 @@ class TestRunner():
                 c = 0
 
 
-    
     def split_work(self, list_reqs):
+        '''
+        list_reqs: expecting [("op", "key", "value"), ("op", "key", "value"), ...]
+        '''
+        unique = defaultdict(list)
+        for node in self.nodes:
+            unique[node].append("default")
+        
+        print("unique nodes: " + str(len(unique)) + " nodes: " + str(len(self.nodes)))
+
+        # crdt multiplies
+        split = math.ceil(len(list_reqs) / len(unique))
+        works = []
+        print(str(self.crdts[0]))
+        print("Split: " + str(split) + " list_reqs: " + str(len(list_reqs)) + " self.crdts:" + str(len(self.crdts)))
+        
+        # above is equal per physical server
+        # ignore client multiplier for now
+        excess = len(self.nodes)%len(unique)
+        cycle = int(len(self.nodes)/len(unique))
+        print("excess: " + str(excess) + " cycle: " + str(cycle))
+        i = 0
+        j = 0
+        total_request = len(list_reqs)
+        leftover = []
+        for node in unique:
+            if(total_request > split):
+                total_request -= split
+                leftover.append(split)
+            else:
+                leftover.append(total_request)
+        print("leftover: " + str(leftover))
+        while(i<len(self.nodes)):
+            physical = int(i % len(unique))
+            if(physical < excess):
+                ssplit = math.ceil(split / (1+cycle))
+                if(leftover[physical] > ssplit):
+                    leftover[physical] -= ssplit
+                else:
+                    ssplit = leftover[physical]
+            else:
+                ssplit = math.ceil(split / cycle)
+                if(leftover[physical] > ssplit):
+                    leftover[physical] -= ssplit
+                else:    
+                    ssplit = leftover[physical]
+            
+            works.append(mix_lists(list_reqs[j:j + ssplit]))
+            print(str(i) + " belongs to physical " + str(physical) + " ssplit " + str(ssplit))
+            
+            j = split
+            i+=1
+
+        workers_pool = multiprocessing.Pool(self.num_clients)
+        workers_pool.starmap(self.worker, zip(self.crdts, works))
+        workers_pool.close()
+        workers_pool.join() 
+
+
+
+    def split_work_OG(self, list_reqs):
         '''
         list_reqs: expecting [("op", "key", "value"), ("op", "key", "value"), ...]
         '''
@@ -422,7 +482,7 @@ class TestRunner():
     def worker(self, crdt, list_reqs):
         temp = []
         last_rid = {}
-        print("crdt " + str(crdt)+" len reqs:"+ str(len(list_reqs)))
+        print("crdt " + str(crdt)+" len reqs:"+ str(len(list_reqs)) + " " + crdt.server.get_addr())
         for req in list_reqs:
             if self.sleeptime > 0:
                 time.sleep(self.sleeptime)

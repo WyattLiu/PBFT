@@ -60,14 +60,14 @@ public class CounterClient {
 			ByteArrayOutputStream out = new ByteArrayOutputStream(4);
 			new DataOutputStream(out).writeInt(inc);
 
-			System.out.print("Invocation " + i);
+			//System.out.print("Invocation " + i);
 			byte[] reply = (inc == 0)?
 				counterProxy.invokeUnordered(out.toByteArray()):
 				counterProxy.invokeOrdered(out.toByteArray()); //magic happens here
 			
 			if(reply != null) {
 			    	int newValue = new DataInputStream(new ByteArrayInputStream(reply)).readInt();
-			    	System.out.println(", returned value: " + newValue);
+			    	// System.out.println(", returned value: " + newValue);
 				// BFT done here
 				try(
                                         Socket clientSocket = serverSocket.accept();
