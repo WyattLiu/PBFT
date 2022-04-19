@@ -1,3 +1,4 @@
 /home/wyatt/proj/pbft_test/PBFT/results_5_pbft_1to5_client/single_pbft_test_result_file_1_lt.txt	    pbft-blockchain 
 /home/wyatt/proj/pbft_test/PBFT/yunhao_results/bft-crdt-counter/bft-1_lt.txt     bft-agreement
 /home/wyatt/proj/pbft_test/PBFT/yunhao_results/pn-counter-baseline/pnc-1_lt.txt  baseline
+/home/wyatt/proj/pbft_test/PBFT/ultimate_bftsmart/single_pbft_test_result_file_1_lt.txt bft-smart
