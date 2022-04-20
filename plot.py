@@ -14,7 +14,7 @@ x = [item[0] for item in bft_scale]
 y = [item[1] for item in bft_scale]
 x = np.array(x)
 y = np.array(y)
-ax1.scatter(x, y, s=10, marker="o", label="pnc")
+ax1.scatter(x, y, s=10, marker="o", label="bft safe crdt")
 newx = np.linspace(x.min(), x.max(), 300) 
 spl = make_interp_spline(x, y, k=1)
 smooth = spl(newx)
@@ -24,7 +24,7 @@ x = [item[0] for item in pnc_scale]
 y = [item[1] for item in pnc_scale]
 x = np.array(x)
 y = np.array(y)
-ax1.scatter(x, y, s=10, marker="x", label="bft")
+ax1.scatter(x, y, s=10, marker="x", label="pnc crdt baseline")
 newx = np.linspace(x.min(), x.max(), 300) 
 spl = make_interp_spline(x, y, k=1)
 smooth = spl(newx)
